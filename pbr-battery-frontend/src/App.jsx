@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import { useAuth } from './contexts/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { user, loading } = useAuth();
@@ -16,6 +18,8 @@ function App() {
   }
 
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={3000} />
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route
@@ -24,6 +28,7 @@ function App() {
       />
       <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
+    </> 
   );
 }
 

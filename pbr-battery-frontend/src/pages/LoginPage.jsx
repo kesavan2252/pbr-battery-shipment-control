@@ -76,7 +76,7 @@ function LoginPage() {
           </div>
         </form>
         <p className="text-center text-gray-600 text-xs sm:text-sm mt-8">
-          Hint: Try 'admin' / 'adminpass' or 'user' / 'userpass'
+          Hint: Try 'admin' / 'admin123' or 'user' / 'userpass'
         </p>
       </div>
     </div>

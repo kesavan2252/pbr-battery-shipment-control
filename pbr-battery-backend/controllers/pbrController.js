@@ -117,33 +117,39 @@ const addShipment = async (req, res) => {
 };
 
 // PUT /api/pbr/contracts/:contractId/toggle-lock
-const toggleContractLock = async (req, res) => {
-  const { contractId } = req.params;
-  const { isLocked } = req.body;
+async function toggleContractLock(req, res) {
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+        const contract = await PBRContract.findById(req.params.id).session(session);
+        
+        if (!contract) {
+            await session.abortTransaction();
+            return res.status(404).json({ message: 'Contract not found' });
+        }
 
-  if (typeof isLocked !== 'boolean') {
-    return res.status(400).json({ message: 'Invalid lock status (must be boolean)' });
-  }
+        if (typeof req.body.isLocked !== 'boolean') {
+            await session.abortTransaction();
+            return res.status(400).json({ message: 'Invalid isLocked value' });
+        }
 
-  try {
-    const contract = await PBRContract.findOneAndUpdate(
-      { contractId },
-      { $set: { isLocked, lastUpdated: new Date() } },
-      { new: true, runValidators: true }
-    );
-
-    if (!contract) {
-      return res.status(404).json({ message: 'Contract not found' });
+        contract.isLocked = req.body.isLocked;
+        contract.lastUpdated = new Date();
+        await contract.save({ session });
+        
+        await session.commitTransaction();
+        res.status(200).json(contract);
+    } catch (error) {
+        await session.abortTransaction();
+        console.error('Lock toggle error:', error);
+        res.status(500).json({ 
+            message: 'Error updating contract lock status',
+            error: error.message 
+        });
+    } finally {
+        session.endSession();
     }
-
-    emitContractUpdate(contract);
-    res.json({ message: 'Contract lock status updated', contract });
-
-  } catch (error) {
-    console.error('Error toggling lock:', error);
-    res.status(500).json({ message: 'Server error toggling lock', error: error.message });
-  }
-};
+}
 
 // POST /api/pbr/seed-contracts
 const seedContracts = async (req, res) => {
