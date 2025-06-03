@@ -86,7 +86,7 @@ pbr-battery-management/
 | `VITE_API_URL` | Backend API URL | Yes |
 
 ## Deployment
-[![Deploy on Vercel](https://vercel.com/button)](https://vercel.com/new)
+[![Deploy on Vercel](https://vercel.com/button)]([https://vercel.com/new](https://pbr-battery-shipment-control.vercel.app/login))
 
 ## Contributing
 1. Fork the project
